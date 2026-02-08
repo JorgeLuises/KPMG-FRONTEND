@@ -24,3 +24,20 @@ export type RespuestaAPI = {
     errores : ErrorAPI[];
     usuario ?: { email ?: string}
 }
+
+export type Empleado = {
+    educacion : string;
+    anioUnion : number;
+    edad : number;
+    genero : string;
+    benched : boolean;
+    experiencia : number;
+    idDepartamento : string;
+    idCiudad : string;
+    idPago : string;
+    nombreEmpleado : string;
+}
+
+export type Empleados = {
+    data : Empleado[];
+}

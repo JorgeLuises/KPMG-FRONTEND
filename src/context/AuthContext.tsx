@@ -10,9 +10,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     useEffect(() => {
         const verificarUsuario = async () => {
             try {
-                const { data } = await axios.get('http://localhost:3000/usuario/verificacion');
+                const { data } = await axios.get('http://localhost:3000/usuario/verificacion', {
+                    withCredentials: true}
+                );
                 setAuth(data);
-                console.log(data);
             } catch (error) {
                 setAuth(null);
             } finally {

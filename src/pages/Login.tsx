@@ -1,15 +1,14 @@
-import { useEffect } from "react";
-import { useNavigate } from 'react-router-dom';
+import { Navigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import LoginForm from "../components/LoginForm";
+import Spinner from "../components/Spinner";
 
 export default function Login() {
-  const { auth } = useAuth();
-  const navigate = useNavigate();
+  const { auth, loading } = useAuth();
 
-  useEffect(() => {
-    if(auth) navigate('/home')
-  }, [auth, navigate])
-  
-  return < LoginForm/>;
+  if (loading) return <Spinner />;
+
+  if (auth) return <Navigate to="/home" replace />;
+
+  return <LoginForm />;
 }
