@@ -36,6 +36,7 @@ export type Empleado = {
     idCiudad : string;
     idPago : string;
     nombreEmpleado : string;
+    idEmpleado : string;
 }
 
 export type Empleados = {

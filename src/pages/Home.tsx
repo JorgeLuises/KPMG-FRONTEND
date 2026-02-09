@@ -3,11 +3,13 @@ import axios from 'axios';
 import { Menu } from "lucide-react";
 import SideBar from "../components/SideBar";
 import TablaEmpleados from "../components/TablaEmpleados";
+import Spinner from "../components/Spinner";
 import type { Empleados } from "../types";
 
 export default function Home() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [empleados, setEmpleados] = useState<Empleados>({ data : [] });
+  const [empleados, setEmpleados] = useState<Empleados>({ data: [] });
+  const [isLoading, setIsLoading] = useState(true);
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -19,8 +21,25 @@ export default function Home() {
 
   useEffect(() => {
     const mostrarEmpleados = async () => {
-      const respuesta = await axios.get('http://localhost:3000/empleados/empleados', { withCredentials: true });
-      setEmpleados(respuesta.data);
+      try {
+        setIsLoading(true);
+        const respuesta = await axios.get('http://localhost:3000/empleados/empleados', {
+          withCredentials: true
+        });
+
+        // Asegurarse de que tiene la propiedad 'data'
+        if (respuesta.data && Array.isArray(respuesta.data.data)) {
+          setEmpleados(respuesta.data);
+        } else if (Array.isArray(respuesta.data)) {
+          // Si la API devuelve directamente el array
+          setEmpleados({ data: respuesta.data });
+        }
+      } catch (error) {
+        console.error('Error al cargar empleados:', error);
+        setEmpleados({ data: [] });
+      } finally {
+        setIsLoading(false);
+      }
     }
 
     mostrarEmpleados();
@@ -51,7 +70,7 @@ export default function Home() {
           {/* Espacio para el contenido de la página */}
           <main className="p-8">
             <h1 className="font-bold text-4xl mb-5">Interfaz de control de empleados</h1>
-            <TablaEmpleados empleados={ empleados }/>
+            {isLoading ? <Spinner /> : <TablaEmpleados empleados={empleados} />}
           </main>
         </div>
       </div>
