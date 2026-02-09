@@ -1,6 +1,8 @@
 import { RouterProvider, createBrowserRouter, Navigate } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/ReactToastify.css';
 import { AuthProvider } from './context/AuthContext';
-import UsuarioProtegido from './components/UsuarioProtegido'; // El guardián que creamos antes
+import UsuarioProtegido from './components/UsuarioProtegido';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import ForgotPassword from './pages/ForgotPassword';
@@ -44,6 +46,18 @@ function App() {
     //Provider envuelva al Router para que ProtectedRoute pueda acceder al estado de autenticación
     <AuthProvider>
       <RouterProvider router={router} />
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
     </AuthProvider>
   );
 }

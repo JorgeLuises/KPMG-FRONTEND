@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from 'axios';
+import { toast } from 'react-toastify';
 import { Menu } from "lucide-react";
 import SideBar from "../components/SideBar";
 import TablaEmpleados from "../components/TablaEmpleados";
@@ -39,6 +40,23 @@ export default function Home() {
         setEmpleados({ data: [] });
       } finally {
         setIsLoading(false);
+
+        // Mostrar toast almacenado en sessionStorage después de recargar
+        const raw = sessionStorage.getItem('toastAfterReload');
+        if (raw) {
+          try {
+            const { type, text } = JSON.parse(raw);
+            if (type === 'success') toast.success(text);
+            else if (type === 'error') toast.error(text);
+            else if (type === 'info') toast.info(text);
+            else if (type === 'warning') toast.warning(text);
+            else toast(text);
+          } catch (e) {
+            console.error('Error parsing toastAfterReload', e);
+          } finally {
+            sessionStorage.removeItem('toastAfterReload');
+          }
+        }
       }
     }
 
