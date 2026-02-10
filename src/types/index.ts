@@ -39,6 +39,8 @@ export type Empleado = {
     idPago: string;
     nombreEmpleado: string;
     idEmpleado: string;
+    idCiudad: string;
+    idDepartamento: string;
 }
 export type Empleados = {
     data: Empleado[];
@@ -56,4 +58,21 @@ export type Filtros = {
     departamento: string[];
     nombreCiudad: string[];
     idPago: string[];
+};
+
+//Types de departamentos
+export type Departamento = {
+    idDepartamento: string;
+    departamento: string;
+};
+
+//Types de ciudades
+export type Ciudad = {
+    idCiudad: string;
+    nombreCiudad: string;
+};
+
+//Types de pago
+export type Pago = {
+    idPago: string;
 };
