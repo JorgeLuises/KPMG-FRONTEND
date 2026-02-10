@@ -1,3 +1,5 @@
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import { X } from 'lucide-react';
 
 type SideBarProps = {
@@ -6,6 +8,18 @@ type SideBarProps = {
 }
 
 export default function SideBar({ isOpen, onClose }: SideBarProps) {
+    const navigate = useNavigate();
+    
+    const handleLogout = async () => {
+        try {
+            await axios.post('http://localhost:3000/usuario/logout', {}, { withCredentials: true });
+            window.location.reload();
+            navigate('/');
+        } catch (error) {
+            console.error("Error al cerrar sesión");
+        }
+    }
+    
     return (
         <>
             {/* Overlay oscuro */}
@@ -18,7 +32,7 @@ export default function SideBar({ isOpen, onClose }: SideBarProps) {
 
             {/* Sidebar */}
             <aside
-                className={`fixed top-0 left-0 h-full w-72 bg-linear-to-b from-slate-900 via-slate-800 to-slate-900 shadow-2xl z-50 transform transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : '-translate-x-full'
+                className={`fixed top-0 left-0 h-full w-72 bg-linear-to-b from-blue-800 via-blue-700 to-blue-800 shadow-2xl z-50 transform transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : '-translate-x-full'
                     }`}
             >
                 {/* Header del Sidebar */}
@@ -72,6 +86,7 @@ export default function SideBar({ isOpen, onClose }: SideBarProps) {
                 <div className="p-6 border-t border-slate-700">
                     <button
                         className="w-full px-4 py-3 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg transition-colors duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98]"
+                        onClick={handleLogout}
                     >
                         Cerrar sesión
                     </button>
