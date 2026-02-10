@@ -7,14 +7,19 @@ import type { Empleado, RespuestaAPI, Departamento, Ciudad, Pago } from '../type
 
 type ModalRegistroProps = {
   dispatch: React.ActionDispatch<[actions: accionesEmpleados]>,
-  titulo: string
+  titulo: string,
+  idEmpleado?: string;
+  empleado?: Empleado
 }
 
-export default function ModalRegistroEmpleado({ dispatch, titulo }: ModalRegistroProps) {
-  const { register, handleSubmit, formState: { errors }, reset, setError } = useForm<Empleado>();
+export default function ModalRegistroEmpleado({ dispatch, titulo, idEmpleado, empleado }: ModalRegistroProps) {
+  const { register, handleSubmit, formState: { errors }, reset, setError } = useForm<Empleado>({ defaultValues: empleado || {} });
   const [departamentos, setDepartamentos] = useState<Departamento[]>([]);
   const [ciudades, setCiudades] = useState<Ciudad[]>([]);
   const [pagos, setPagos] = useState<Pago[]>([]);
+
+  //Entrar en modo de edición
+  const modoEdicion = !!empleado;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -32,18 +37,34 @@ export default function ModalRegistroEmpleado({ dispatch, titulo }: ModalRegistr
       catch (error) {
         console.error('Error al cargar datos en formulario:', error);
       }
-      
     }
     fetchData();
   }, []);
 
-  const onSubmit = async (data: Empleado) => {
+  //Actualizar valores del formulario cuando cambie el empleado
+  // Solo resetear después de que los datos se hayan cargado
+  useEffect(() => {
+    if (empleado && departamentos.length > 0 && ciudades.length > 0 && pagos.length > 0) {
+      reset(empleado);
+    }
+  }, [empleado, reset, departamentos, ciudades, pagos]);
+
+const onSubmit = async (data: Empleado) => {
     try {
-      console.log(data);
-      const response = await axios.post("http://localhost:3000/empleados/agregarEmpleado",data, { withCredentials: true });
+      // Decidir endpoint según el modo
+      const endpoint = modoEdicion 
+        ? `http://localhost:3000/empleados/editarEmpleado/${idEmpleado}`
+        : "http://localhost:3000/empleados/agregarEmpleado";
+      
+      const metodo = modoEdicion ? 'patch' : 'post';
+      
+      const response = await axios[metodo](endpoint, data, { withCredentials: true });
 
       if (response.data.mensaje) {
-        sessionStorage.setItem('toastAfterReload', JSON.stringify({ type: 'success', text: response.data.mensaje }))
+        sessionStorage.setItem('toastAfterReload', JSON.stringify({ 
+          type: 'success', 
+          text: response.data.mensaje 
+        }));
       }
       reset();
       window.location.reload();
@@ -163,7 +184,7 @@ export default function ModalRegistroEmpleado({ dispatch, titulo }: ModalRegistr
                   {...register('genero')}
                   className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
                 >
-                  <option value="" disabled selected>Seleccione un género</option>
+                  <option value="">Seleccione un género</option>
                   <option value="Masculino">Masculino</option>
                   <option value="Femenino">Femenino</option>
                   <option value="Otro">Otro</option>
@@ -184,7 +205,7 @@ export default function ModalRegistroEmpleado({ dispatch, titulo }: ModalRegistr
                   {...register('educacion')}
                   className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
                 >
-                  <option value="" disabled selected>Seleccione nivel de estudios</option>
+                  <option value="">Seleccione nivel de estudios</option>
                   <option value="Bachillerato">Bachillerato</option>
                   <option value="Licenciatura">Licenciatura</option>
                   <option value="Maestría">Maestría</option>
@@ -205,7 +226,7 @@ export default function ModalRegistroEmpleado({ dispatch, titulo }: ModalRegistr
                   {...register('benched')}
                   className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
                 >
-                  <option value="" disabled selected>Seleccione una opción</option>
+                  <option value="">Seleccione una opción</option>
                   <option value="1">Sí</option>
                   <option value="0">No</option>
                 </select>
@@ -246,7 +267,7 @@ export default function ModalRegistroEmpleado({ dispatch, titulo }: ModalRegistr
                   {...register('idDepartamento')}
                   className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
                 >
-                  <option value="" disabled selected>Seleccione un departamento</option>
+                  <option value="">Seleccione un departamento</option>
                   {departamentos.map((depto, index) => (
                     <option key={index} value={depto.idDepartamento}>{depto.departamento}</option>
                   ))}
@@ -268,7 +289,7 @@ export default function ModalRegistroEmpleado({ dispatch, titulo }: ModalRegistr
                   {...register('idCiudad')}
                   className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
                 >
-                  <option value="" disabled selected>Seleccione una ciudad</option>
+                  <option value="">Seleccione una ciudad</option>
                   {ciudades.map((ciudad, index) => (
                     <option key={index} value={ciudad.idCiudad}>{ciudad.nombreCiudad}</option>
                   ))}
@@ -289,7 +310,7 @@ export default function ModalRegistroEmpleado({ dispatch, titulo }: ModalRegistr
                   {...register('idPago')}
                   className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
                 >
-                  <option value="" disabled selected>Seleccione una opción</option>
+                  <option value="">Seleccione una opción</option>
                   {pagos.map((pago, index) => (
                     <option key={index} value={pago.idPago}>{pago.idPago}</option>
                   ))}

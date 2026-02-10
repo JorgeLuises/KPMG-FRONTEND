@@ -2,6 +2,7 @@ import type { Empleado } from "../types";
 
 export type accionesEmpleados =
     { type: 'abrirformulario', payload: { value: boolean } } |
+    { type: 'abrirformularioEdi', payload: { value: boolean, idEmpleado: Empleado['idEmpleado'], empleado: Empleado } } |
     { type: 'abrirWarning', payload: { value: boolean, idEmpleado: Empleado['idEmpleado'], nombreEmpleado: Empleado['nombreEmpleado'] } } |
     { type: 'cerrarModal', payload: { value: boolean } } |
     { type: 'eliminarEmpleado', payload: { idEmpleado: Empleado['idEmpleado'] } }
@@ -12,7 +13,7 @@ export type state = {
     cerrar: boolean;
     idEmpleado: string;
     nombreEmpleado: string;
-    mensajeAPI?: string;
+    empleado?: Empleado;
 }
 
 export const initialState: state = {
@@ -20,7 +21,8 @@ export const initialState: state = {
     warning: false,
     cerrar: false,
     idEmpleado: '',
-    nombreEmpleado: ''
+    nombreEmpleado: '',
+    empleado: undefined
 }
 
 export const empleadosReducer = (estado: state = initialState, actions: accionesEmpleados) => {
@@ -30,6 +32,15 @@ export const empleadosReducer = (estado: state = initialState, actions: acciones
                 ...estado,
                 formulario: true,
                 cerrar: false
+            }
+
+        case 'abrirformularioEdi':
+            return {
+                ...estado,
+                formulario: true,
+                cerrar: false,
+                idEmpleado: actions.payload.idEmpleado,
+                empleado: actions.payload.empleado
             }
 
         case 'abrirWarning':

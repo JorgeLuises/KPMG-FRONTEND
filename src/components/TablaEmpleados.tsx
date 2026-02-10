@@ -377,7 +377,7 @@ export default function TablaEmpleados({ empleados }: TablaEmpleadosProps) {
                   <td className="border-b border-slate-200 px-4 py-3 text-slate-700">
                     <button 
                       className="mr-2 rounded bg-blue-500 p-2 text-sm text-white hover:bg-blue-600 transition-colors duration-200 cursor-pointer"
-                      onClick={() => dispatch({ type: 'abrirformulario', payload: {value: true}})}>
+                      onClick={() => dispatch({ type: 'abrirformularioEdi', payload: {value: true, idEmpleado: empleado.idEmpleado, empleado: empleado}})}>
                         Editar
                     </button>
                     <button 
@@ -395,7 +395,7 @@ export default function TablaEmpleados({ empleados }: TablaEmpleadosProps) {
 
       {/* Sección de modales */}
       {state.formulario && <ModalRegistroEmpleado dispatch={dispatch} titulo={"Agregar empleado"}/>}
-      {state.formulario && <ModalRegistroEmpleado dispatch={dispatch} titulo={"Editar empleado"}/>}
+      {state.formulario && <ModalRegistroEmpleado dispatch={dispatch} titulo={"Editar empleado"} idEmpleado={state.idEmpleado} empleado={state.empleado}/>}
       {state.warning && <ModalEliminarEmpleado dispatch={dispatch} titulo={"Eliminar empleado"} idEmpleado={state.idEmpleado} nombreEmpleado={state.nombreEmpleado} mensaje={'El siguiente empleado será eliminado del sistema'}/>}
 
       {/* Paginación */}
